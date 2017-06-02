@@ -4,4 +4,6 @@
 /.sass-cache
 /bower_components
 /.idea
-development.yaml
+/development.yml
+/app/config/environment.json
+

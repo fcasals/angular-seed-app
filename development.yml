@@ -1,0 +1,12 @@
+serve:
+  port: 9000
+  hostname: "0.0.0.0"
+  livereload: 34567
+proxies: [
+  {
+    context: "/local-path",
+    host: "minsal-sigte.patagonia-it.io",
+    port: 443,
+    https: true
+  }]
+

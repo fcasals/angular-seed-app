@@ -31,7 +31,7 @@ module.exports = function (grunt) {
   // Define the configuration for all the tasks
   grunt.initConfig({
 
-    development: grunt.file.readYAML('development.yaml'),
+    development: grunt.file.readYAML('development.yml'),
     gitinfo: {
       commands: {
         'tag': ['describe', '--tags']
