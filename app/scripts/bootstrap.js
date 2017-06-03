@@ -2,9 +2,9 @@
 
 /**
  * @ngdoc overview
- * @name minsalSigteApp
+ * @name seedApp
  * @description
- * # minsalSigteApp
+ * # seedApp
  *
  * Bootstrap code of the application.
  */
@@ -32,6 +32,8 @@ $.ajax({
       }
     });
 
+    /* AUTENTICACION */
+    /*
     $.ajax({
       type: 'GET',
       url: jwtLoginUrl + 'autenticacion/refresh',
@@ -55,6 +57,7 @@ $.ajax({
         angular.bootstrap($(document).find('#app'), [moduleName]);
       }
     });
+    */
   },
   error: function () {
     document.write('FAIL: environment configuration not present');
