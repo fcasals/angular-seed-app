@@ -1,7 +1,7 @@
 serve:
   port: 9000
   hostname: "0.0.0.0"
-  livereload: 345673
+  livereload: 34567
 proxies: #eliminar esta línea y descomentar las siguientes, en caso de necesitar un proxy
 #proxies: [
   #{
@@ -10,4 +10,3 @@ proxies: #eliminar esta línea y descomentar las siguientes, en caso de necesita
   #  port: 443,
   #  https: true
   #}]
-
