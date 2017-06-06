@@ -25,7 +25,7 @@ try:
                 with open(fpath, "w") as f:
                     f.write(s)
 
-    for fpath in ['Gruntfile.js','bower.json','index.html']:
+    for fpath in ['Gruntfile.js','bower.json','./app/index.html']:
         with open(fpath) as f:
             s = f.read()
         s = s.replace(nombreAntiguo, nombreNuevo)
