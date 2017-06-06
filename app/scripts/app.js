@@ -16,21 +16,36 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'ui.router',
+    'ui.bootstrap',
+    'angular-growl',
+    'angularMoment'
   ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        controllerAs: 'about'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
+
+  .config(function ($locationProvider) {
+    $locationProvider.html5Mode({enabled: false}).hashPrefix('!');
+  })
+
+  .config(function ($httpProvider) {
+    $httpProvider.defaults.withCredentials = true;
+    /* AUTENTICACION */
+    //$httpProvider.interceptors.push('checkSessionAliveInjector');
+  })
+
+  .config(function (growlProvider) {
+    growlProvider.globalTimeToLive(5000);
+  })
+
+  .config(function ($stateProvider, $urlRouterProvider) {
+
+    $urlRouterProvider.otherwise('/');
+
+    $stateProvider
+      .state('example',{
+        url: '/',
+        templateUrl: 'views/example.html',
+        controller: 'exampleCtrl'
+      }
+    );
   });

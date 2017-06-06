@@ -18,6 +18,9 @@ module.exports = function (grunt) {
     ngtemplates: 'grunt-angular-templates'
   });
 
+  // Development variables
+  var development = grunt.file.readYAML('development.yml');
+
   // proxy request object
   grunt.loadNpmTasks('grunt-connect-proxy');
   var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
@@ -41,7 +44,7 @@ module.exports = function (grunt) {
       default_options: {
         files: [
           {
-            append: "<!-- TAG: <%=gitinfo.tag%> BUILD DATE: <%=new Date().toString()%> -->",
+            append: '<!-- TAG: <%=gitinfo.tag%> BUILD DATE: <%=new Date().toString()%> -->',
             input: '<%= yeoman.dist %>/index.html',
             output: '<%= yeoman.dist %>/index.html'
           }
@@ -89,7 +92,7 @@ module.exports = function (grunt) {
 
     // The actual grunt server settings
     connect: {
-      options: '<%= development.serve %>',
+      options: development.serve,
       proxies: '<%= development.proxies %>',
       livereload: {
         options: {
@@ -389,7 +392,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       dist: {
         options: {
-          module: 'seedAppApp',
+          module: 'seedApp',
           htmlmin: '<%= htmlmin.dist.options %>',
           usemin: 'scripts/scripts.js'
         },
@@ -436,6 +439,11 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '.',
           src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
+          dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: '.',
+          src: 'bower_components/font-awesome/fonts/*',
           dest: '<%= yeoman.dist %>'
         }]
       },
@@ -532,7 +540,4 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-  grunt.registerTask('exp', [
-    'exp1'
-  ]);
 };

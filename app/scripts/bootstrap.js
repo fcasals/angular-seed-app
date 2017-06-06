@@ -11,24 +11,33 @@
 
 var moduleName = 'seedApp';
 
-var userInfo, privilegeList;
+/* AUTENTICACION */
+//var userInfo, privilegeList;
 
 $.ajax({
   type: 'GET',
   url: '/config/environment.json',
   success: function (environmentData) {
-    angular.module(moduleName).constant(environmentData);
+    if(!$.isEmptyObject(environmentData)){
+      angular.module(moduleName).constant(environmentData);
+    }
 
+    /* AUTENTICACION */
     //var jwtLoginUrl = environmentData.URLs.loginJwt;
 
     $.ajax({
       type: 'GET',
       url: '/config/parameters.json',
       success: function (parametersData) {
-        angular.module(moduleName).constant(parametersData);
+        if(!$.isEmptyObject(parametersData)){
+          angular.module(moduleName).constant(parametersData);
+        }
+
+        /* INICIO DE APLICACION */
+        angular.bootstrap($(document).find('#app'), [moduleName]);
       },
       error: function () {
-        document.write('FAIL: parameters not present');
+        $('body').text('FAIL: parameters not present');
       }
     });
 
@@ -60,7 +69,7 @@ $.ajax({
     */
   },
   error: function () {
-    document.write('FAIL: environment configuration not present');
+    $('body').text('FAIL: environment configuration not present');
   }
 });/**
  * Created by fcasals on 6/2/17.

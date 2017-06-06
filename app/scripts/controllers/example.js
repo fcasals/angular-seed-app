@@ -8,7 +8,7 @@
  * Controller of the seedApp
  */
 angular.module('seedApp')
-  .controller('MainCtrl', function () {
+  .controller('exampleCtrl', function () {
     this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',

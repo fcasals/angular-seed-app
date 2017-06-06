@@ -10,7 +10,14 @@
     "angular-resource": "1.6.4",
     "angular-route": "1.6.4",
     "angular-sanitize": "1.6.4",
-    "angular-touch": "1.6.4"
+    "angular-touch": "1.6.4",
+    "angular-ui-router": "ui-router#^1.0.3+hybrid-2.0.0-2",
+    "jquery": "3.2.1",
+    "angular-growl-v2": "0.7.9",
+    "angular-i18n": "1.6.4",
+    "angular-bootstrap": "2.5.0",
+    "font-awesome": "4.7.0",
+    "angular-moment": "1.0.1"
   },
   "devDependencies": {
     "angular-mocks": "1.6.4"
@@ -23,6 +30,17 @@
         "less/bootstrap.less",
         "dist/css/bootstrap.css",
         "dist/js/bootstrap.js"
+      ]
+    },
+    "moment": {
+      "main": [
+        "moment.js",
+        "locale/es.js"
+      ]
+    },
+    "font-awesome": {
+      "main": [
+        "scss/font-awesome.scss"
       ]
     }
   }

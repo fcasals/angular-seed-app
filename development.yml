@@ -5,7 +5,7 @@ serve:
 proxies: [
   {
     context: "/local-path",
-    host: "minsal-sigte.patagonia-it.io",
+    host: "remote-domain.com",
     port: 443,
     https: true
   }]
