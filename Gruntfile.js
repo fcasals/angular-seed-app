@@ -18,9 +18,15 @@ module.exports = function (grunt) {
     ngtemplates: 'grunt-angular-templates'
   });
 
-  // Development variables
-  var development = grunt.file.readYAML('development.yml');
+  grunt.loadNpmTasks('grunt-contrib-compress');
 
+  // Development variables
+  try{
+    var development = grunt.file.readYAML('development.yml');
+  }
+  catch(err){
+    console.log(err.message);
+  }
   // proxy request object
   grunt.loadNpmTasks('grunt-connect-proxy');
   var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
@@ -28,13 +34,14 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'dist'
+    dist: 'dist',
+    name: require('./bower.json').name || 'app-name'
   };
 
   // Define the configuration for all the tasks
   grunt.initConfig({
 
-    development: grunt.file.readYAML('development.yml'),
+    //development: grunt.file.readYAML('development.yml'),
     gitinfo: {
       commands: {
         'tag': ['describe', '--tags']
@@ -92,8 +99,8 @@ module.exports = function (grunt) {
 
     // The actual grunt server settings
     connect: {
-      options: development.serve,
-      proxies: '<%= development.proxies %>',
+      options: development ? development.serve : '',
+      proxies: development ? development.proxies : '',
       livereload: {
         options: {
           open: true,
@@ -138,7 +145,18 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    compress: {
+        tgz: {
+            options: {
+                archive: 'build/'+appConfig.name+'-frontend.tar.gz'
+            },
+            files: [{
+                expand: true,
+                cwd: 'dist',
+                src: ['**/*']
+            }]
+        }
+    },
     // Make sure there are no obvious mistakes
     jshint: {
       options: {
@@ -445,6 +463,11 @@ module.exports = function (grunt) {
           cwd: '.',
           src: 'bower_components/font-awesome/fonts/*',
           dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.app%>',
+          src: 'config/parameters.json',
+          dest: '<%= yeoman.dist %>'
         }]
       },
       styles: {
@@ -530,7 +553,8 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
-    'file_append'
+    'file_append',
+    'compress:tgz'
   ]);
 
   grunt.registerTask('default', [
