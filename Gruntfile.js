@@ -9,8 +9,21 @@
 
 module.exports = function (grunt) {
 
+  grunt.loadNpmTasks('grunt-gitinfo');
+  grunt.loadNpmTasks('grunt-file-append');
+  grunt.loadNpmTasks('grunt-connect-proxy');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-nexus-deployer');
+
+  // proxy request object
+  var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
+
+  // Development variables
+  var development = grunt.file.readYAML('development.yml');
+  var dateformat = require('dateformat');
 
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
@@ -18,39 +31,19 @@ module.exports = function (grunt) {
     ngtemplates: 'grunt-angular-templates'
   });
 
-  // Development variables
-  var development = grunt.file.readYAML('development.yml');
-
-  // proxy request object
-  grunt.loadNpmTasks('grunt-connect-proxy');
-  var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
-
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'dist'
+    dist: 'dist',
+    version: require('./bower.json').version
   };
 
   // Define the configuration for all the tasks
   grunt.initConfig({
 
-    development: grunt.file.readYAML('development.yml'),
-    gitinfo: {
-      commands: {
-        'tag': ['describe', '--tags']
-      }
-    },
-    file_append: {
-      default_options: {
-        files: [
-          {
-            append: '<!-- TAG: <%=gitinfo.tag%> BUILD DATE: <%=new Date().toString()%> -->',
-            input: '<%= yeoman.dist %>/index.html',
-            output: '<%= yeoman.dist %>/index.html'
-          }
-        ]
-      }
-    },
+    //development: grunt.file.readYAML('development.yml'),
+    development: development,
+
     // Project settings
     yeoman: appConfig,
 
@@ -90,10 +83,34 @@ module.exports = function (grunt) {
       }
     },
 
+    gitinfo: {
+      commands: {
+        'tag': ['describe', '--tags']
+      }
+    },
+    file_append: {
+      default_options: {
+        files: [
+          {
+            append: '<!-- TAG: <%=gitinfo.tag%> BUILD DATE: <%=new Date().toString()%> -->',
+            input: '<%= yeoman.dist %>/index.html',
+            output: '<%= yeoman.dist %>/index.html'
+          }
+        ]
+      }
+    },
+    uglify: {
+      options: {
+        compress: {
+          drop_console: true
+        }
+      }
+    },
+
     // The actual grunt server settings
     connect: {
       options: development.serve,
-      proxies: '<%= development.proxies %>',
+      proxies: development.proxies,
       livereload: {
         options: {
           open: true,
@@ -137,6 +154,62 @@ module.exports = function (grunt) {
           base: '<%= yeoman.dist %>'
         }
       }
+    },
+
+    compress: {
+      tgz: {
+        options: {
+          archive: 'build/esign-sistema-facturacion-frontend.tar.gz'
+        },
+        files: [{
+          expand: true,
+          cwd: 'dist',
+          src: ['**/*']
+        }]
+      }
+    },
+    nexusDeployer: {
+      snapshot: {
+        options: {
+          groupId: 'com.patagoniait.esign.dte',
+          artifactId: 'frontend',
+          version: '<%= yeoman.version%>-SNAPSHOT',
+          packaging: 'tar.gz',
+          auth: {
+            username: '<%= yeoman.nexusUsername %>',
+            password: '<%= yeoman.nexusPassword %>'
+          },
+          pomDir: 'build/pom',
+          url: 'http://nexus.patagonia-it.io:8081/repository/maven-snapshots',
+          artifact: 'build/esign-sistema-facturacion-frontend.tar.gz',
+          lastUpdated: '-' + dateformat(new Date(), "yyyymmdd.HHMMss", true),
+          noproxy: 'localhost',
+          cwd: '',
+          parallel: false,
+          quiet: false
+        }
+      },
+      release: {
+        options: {
+          groupId: 'com.patagoniait.esign.dte',
+          artifactId: 'frontend',
+          version: '<%= yeoman.version%>',
+          packaging: 'tar.gz',
+          auth: {
+            username: '<%= yeoman.nexusUsername %>',
+            password: '<%= yeoman.nexusPassword %>'
+          },
+          pomDir: 'build/pom',
+          url: 'http://nexus.patagonia-it.io:8081/repository/maven-releases',
+          artifact: 'build/esign-sistema-facturacion-frontend.tar.gz',
+          lastUpdated: '',
+          noproxy: 'localhost',
+          cwd: '',
+          parallel: false,
+          quiet: false
+        }
+      }
+
     },
 
     // Make sure there are no obvious mistakes
@@ -223,23 +296,23 @@ module.exports = function (grunt) {
     wiredep: {
       app: {
         src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /\.\.\//
+        ignorePath: /\.\.\//
       },
       test: {
         devDependencies: true,
         src: '<%= karma.unit.configFile %>',
-        ignorePath:  /\.\.\//,
-        fileTypes:{
+        ignorePath: /\.\.\//,
+        fileTypes: {
           js: {
             block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
-              detect: {
-                js: /'(.*\.js)'/gi
-              },
-              replace: {
-                js: '\'{{filePath}}\','
-              }
+            detect: {
+              js: /'(.*\.js)'/gi
+            },
+            replace: {
+              js: '\'{{filePath}}\','
             }
           }
+        }
       },
       sass: {
         src: ['<%= yeoman.app %>/styles/**/*.{scss,sass}'],
@@ -346,9 +419,11 @@ module.exports = function (grunt) {
     //     }
     //   }
     // },
-    // concat: {
-    //   dist: {}
-    // },
+    concat: {
+      options: {
+        separator: ';\n'
+      }
+    },
 
     imagemin: {
       dist: {
@@ -445,6 +520,16 @@ module.exports = function (grunt) {
           cwd: '.',
           src: 'bower_components/font-awesome/fonts/*',
           dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.app%>',
+          src: 'config/parameters.json',
+          dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.app%>',
+          src: 'config/environment.json.erb',
+          dest: '<%= yeoman.dist %>'
         }]
       },
       styles: {
@@ -478,9 +563,7 @@ module.exports = function (grunt) {
       }
     },
 
-    exp1:{
-
-    }
+    exp1: {}
   });
 
 
@@ -532,6 +615,18 @@ module.exports = function (grunt) {
     'htmlmin',
     'file_append'
   ]);
+
+  grunt.registerTask('deploy', 'Esta tarea sube un SNAPSHOT al nexus', function (target) {
+    appConfig.nexusUsername = process.env.NEXUS_USERNAME;
+    appConfig.nexusPassword = process.env.NEXUS_PASSWORD;
+    grunt.task.run(['build', 'nexusDeployer:snapshot']);
+  });
+
+  grunt.registerTask('release', 'Esta tarea sube un RELEASE al nexus', function (target) {
+    appConfig.nexusUsername = process.env.NEXUS_USERNAME;
+    appConfig.nexusPassword = process.env.NEXUS_PASSWORD;
+    grunt.task.run(['build', 'nexusDeployer:release']);
+  });
 
   grunt.registerTask('default', [
     'newer:jshint',

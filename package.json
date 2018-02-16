@@ -2,11 +2,13 @@
   "name": "seedapp",
   "private": true,
   "devDependencies": {
+    "grunt-contrib-compress": "^1.4.3",
+    "grunt-nexus-deployer": "git+https://github.com/patagonia-it/grunt-nexus-deployer.git",
     "autoprefixer-core": "5.2.1",
     "grunt": "0.4.5",
     "grunt-angular-templates": "0.5.9",
     "grunt-concurrent": "1.0.1",
-    "grunt-connect-proxy": "0.2.0",
+    "grunt-connect-proxy": "git+https://github.com/drewzboto/grunt-connect-proxy.git#3e212633bb959ef4d546580d4ab100cf14cbf25f",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-compass": "1.1.1",
     "grunt-contrib-concat": "0.5.1",
@@ -34,8 +36,8 @@
     "jshint-stylish": "1.0.2",
     "karma": "^1.7.0",
     "karma-jasmine": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.4",
-    "phantomjs-prebuilt": "^2.1.14",
+    "karma-phantomjs-launcher": "1.0.4",
+    "phantomjs-prebuilt": "2.1.15",
     "time-grunt": "1.4.0"
   },
   "engines": {
