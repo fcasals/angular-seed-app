@@ -22,8 +22,13 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   // Development variables
-  var development = grunt.file.readYAML('development.yml');
-  var dateformat = require('dateformat');
+  try{
+    var development = grunt.file.readYAML('development.yml');
+    var dateformat = require('dateformat');
+  }
+  catch(err){
+    console.log(err.message);
+  }
 
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
@@ -35,16 +40,16 @@ module.exports = function (grunt) {
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
     dist: 'dist',
-    version: require('./bower.json').version
+    version: require('./bower.json').version,
+    name: require('./bower.json').name || 'app-name',
+    companyName: require('./bower.json').company || 'company-name',
+    clientName: require('./bower.json').client || 'client-name'
   };
 
   // Define the configuration for all the tasks
   grunt.initConfig({
 
-    //development: grunt.file.readYAML('development.yml'),
     development: development,
-
-    // Project settings
     yeoman: appConfig,
 
     // Watches files for changes and runs tasks based on the changed files
@@ -109,8 +114,8 @@ module.exports = function (grunt) {
 
     // The actual grunt server settings
     connect: {
-      options: development.serve,
-      proxies: development.proxies,
+      options: development ? development.serve : '',
+      proxies: development ? development.proxies : '',
       livereload: {
         options: {
           open: true,
@@ -156,6 +161,7 @@ module.exports = function (grunt) {
       }
     },
 
+
     compress: {
       tgz: {
         options: {
@@ -171,7 +177,7 @@ module.exports = function (grunt) {
     nexusDeployer: {
       snapshot: {
         options: {
-          groupId: 'com.patagoniait.esign.dte',
+          groupId: '<%= yeoman.companyName%>.<%= yeoman.clientName%>.<%= yeoman.name%>',
           artifactId: 'frontend',
           version: '<%= yeoman.version%>-SNAPSHOT',
           packaging: 'tar.gz',
@@ -181,7 +187,7 @@ module.exports = function (grunt) {
           },
           pomDir: 'build/pom',
           url: 'http://nexus.patagonia-it.io:8081/repository/maven-snapshots',
-          artifact: 'build/esign-sistema-facturacion-frontend.tar.gz',
+          artifact: 'build/<%= yeoman.clientName%>-<%= yeoman.name%>-frontend.tar.gz',
           lastUpdated: '-' + dateformat(new Date(), "yyyymmdd.HHMMss", true),
           noproxy: 'localhost',
           cwd: '',
@@ -191,7 +197,7 @@ module.exports = function (grunt) {
       },
       release: {
         options: {
-          groupId: 'com.patagoniait.esign.dte',
+          groupId: '<%= yeoman.companyName%>.<%= yeoman.clientName%>.<%= yeoman.name%>',
           artifactId: 'frontend',
           version: '<%= yeoman.version%>',
           packaging: 'tar.gz',
@@ -201,7 +207,7 @@ module.exports = function (grunt) {
           },
           pomDir: 'build/pom',
           url: 'http://nexus.patagonia-it.io:8081/repository/maven-releases',
-          artifact: 'build/esign-sistema-facturacion-frontend.tar.gz',
+          artifact: 'build/<%= yeoman.clientName%>-<%= yeoman.name%>-frontend.tar.gz',
           lastUpdated: '',
           noproxy: 'localhost',
           cwd: '',
@@ -530,6 +536,7 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app%>',
           src: 'config/environment.json.erb',
           dest: '<%= yeoman.dist %>'
+
         }]
       },
       styles: {
@@ -613,7 +620,8 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
-    'file_append'
+    'file_append',
+    'compress:tgz'
   ]);
 
   grunt.registerTask('deploy', 'Esta tarea sube un SNAPSHOT al nexus', function (target) {

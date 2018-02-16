@@ -6,4 +6,5 @@
 /.idea
 /development.yml
 /app/config/environment.json
+/build
 

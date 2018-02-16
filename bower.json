@@ -1,5 +1,7 @@
 {
   "name": "seed-app",
+  "client": "seed-client",
+  "company": "seed-company",
   "version": "0.1.0",
   "dependencies": {
     "angular": "1.6.4",

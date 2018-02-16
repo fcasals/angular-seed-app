@@ -2,7 +2,7 @@
   "name": "seedapp",
   "private": true,
   "devDependencies": {
-    "grunt-contrib-compress": "^1.4.3",
+    "grunt-contrib-compress": "1.4.3",
     "grunt-nexus-deployer": "git+https://github.com/patagonia-it/grunt-nexus-deployer.git",
     "autoprefixer-core": "5.2.1",
     "grunt": "0.4.5",

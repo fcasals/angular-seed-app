@@ -16,7 +16,7 @@ var moduleName = 'seedApp';
 
 $.ajax({
   type: 'GET',
-  url: '/config/environment.json',
+  url: 'config/environment.json',
   success: function (environmentData) {
     if(!$.isEmptyObject(environmentData)){
       angular.module(moduleName).constant(environmentData);
@@ -27,7 +27,7 @@ $.ajax({
 
     $.ajax({
       type: 'GET',
-      url: '/config/parameters.json',
+      url: 'config/parameters.json',
       success: function (parametersData) {
         if(!$.isEmptyObject(parametersData)){
           angular.module(moduleName).constant(parametersData);
